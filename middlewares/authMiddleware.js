@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const asyncHandler = require('express-async-handler');
+
 const User = require('../models/userModel');
 
 const protect = asyncHandler(async (req, res, next) => {
@@ -10,9 +11,7 @@ const protect = asyncHandler(async (req, res, next) => {
             token = req.headers.authorization.split(' ')[1];
 
             const decoded = jwt.verify(token, "abc123/");
-
-            //get user from token
-
+            
             req.user = await User.findByPk(decoded.id, { attributes: { exclude: ['password'] } });
             next();
 

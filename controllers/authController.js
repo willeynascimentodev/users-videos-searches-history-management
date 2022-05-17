@@ -2,7 +2,7 @@ const { sequelize } = require('sequelize');
 const database = require('../db');
 const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 async function login(req, res) {
 
@@ -29,18 +29,13 @@ async function login(req, res) {
 
 }
 
-async function logout(req, res) { 
-
-}
-
 function generateToken(id) {
     console.log(process.env.JWT_SECRET);
     return jwt.sign({ id }, 'abc123/', {
-        expiresIn: '30d'
+        expiresIn: 7200
     });
 }
 
 module.exports = {
-    login, 
-    logout
+    login
 }
