@@ -33,22 +33,75 @@ async function insertUser(req, res) {
     }
 }
 
-async function getUsers(req, res) {
-    console.log('oi');
+async function getUsers(res) {
+
+    try {
+        const users = await User.findAll();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+
 }
 
-function getUser() {
-    es.status(200).json({
-        message: "oi"
-    });   
+async function getUser(req, res) {
+    try {
+        const user = await User.findByPk(req.params.userId);
+        const response = user != null ? user : { message: "User not found" };
+        const status = user != null ? 200 : 404;
+        res.status(status).json(response);
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
 }
 
-function updateUser() {
-    
+async function updateUser(req, res) {
+    try {
+        const user = await User.findByPk(req.params.userId);
+        let response;
+        let status;
+
+        if (user != null) {
+            
+            
+            user.firstName = req.body.firstName ?? user.firstName;
+            user.lastName = req.body.lastName ?? user.lastName;
+            user.type = req.body.type ?? user.type;
+            user.phone = req.body.phone ?? user.phone; 
+            user.email = req.body.email ?? user.email;
+            user.password = req.body.password ?? user.password;
+            
+            const newUser = await user.save();
+            response = newUser;
+            status =  200;
+        } else {
+            response = { message: "User not found" };
+            status =  404;
+        }
+        
+        res.status(status).json(response);
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
 }
 
-function deleteUser() {
-    
+async function deleteUser(req, res) {
+    try {
+        let result = await User.destroy({ where: { id: req.params.userId }});
+        let response = result === 1 ? 'User deleted' : 'User not found';
+        let status = result === 1 ? 200 : 404;
+        res.status(status).json({ message: response});
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
 }
 
 module.exports = {
