@@ -1,12 +1,18 @@
 const { sequelize } = require('sequelize');
 const database = require('../db');
 const User = require('../models/userModel');
+const bcrypt = require('bcrypt');
 
 
 async function insertUser(req, res) {
-    try {
-        const user = await User.create(req.body);
-        res.status(200).json(user);   
+
+    try { 
+        let body = req.body;
+        const salt  = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(body.password, salt);
+        body.password = hash;
+        const user = await User.create(body);
+        res.status(201).json(user);   
     } catch (e) {
         let message = e.message.split(' ');
 
@@ -31,12 +37,13 @@ async function insertUser(req, res) {
             message: error
         });   
     }
+
 }
 
-async function getUsers(res) {
+async function getUsers(req, res) {
 
     try {
-        const users = await User.findAll();
+        const users = await User.findAll({ attributes: { exclude: ['password'] } });
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({
@@ -47,8 +54,9 @@ async function getUsers(res) {
 }
 
 async function getUser(req, res) {
+
     try {
-        const user = await User.findByPk(req.params.userId);
+        const user = await User.findByPk(req.params.userId, { attributes: { exclude: ['password'] } });
         const response = user != null ? user : { message: "User not found" };
         const status = user != null ? 200 : 404;
         res.status(status).json(response);
@@ -57,9 +65,11 @@ async function getUser(req, res) {
             message: "Internal server error"
         });
     }
+
 }
 
 async function updateUser(req, res) {
+
     try {
         const user = await User.findByPk(req.params.userId);
         let response;
@@ -89,9 +99,11 @@ async function updateUser(req, res) {
             message: "Internal server error"
         });
     }
+
 }
 
 async function deleteUser(req, res) {
+
     try {
         let result = await User.destroy({ where: { id: req.params.userId }});
         let response = result === 1 ? 'User deleted' : 'User not found';
@@ -102,6 +114,7 @@ async function deleteUser(req, res) {
             message: "Internal server error"
         });
     }
+
 }
 
 module.exports = {

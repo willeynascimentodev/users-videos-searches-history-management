@@ -9,6 +9,7 @@ const app = express();
 
 app.use(express.json());
 app.use('/users', require('./routes/userRoute'));
+app.use('/auth', require('./routes/authRoute'));
 
 database.sync();
 
