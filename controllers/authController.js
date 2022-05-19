@@ -12,6 +12,8 @@ async function login(req, res) {
         let passwordMatch;
         if ( user ) {
             passwordMatch = await bcrypt.compare(req.body.password, user.password);
+        } else {
+            res.status(404).json({ message: "User not found" });
         }
         
         if (user && passwordMatch) {
@@ -21,9 +23,7 @@ async function login(req, res) {
             res.status(200).json({user: user, token: token});
         } else if (user && !passwordMatch) { 
             res.status(401).json({ message: "Inválid credentials" });
-        } else {
-            res.status(404).json({ message: "User not found" });
-        }
+        } 
 
     } catch (error) {
         res.status(500).json({
