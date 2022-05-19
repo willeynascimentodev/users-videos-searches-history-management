@@ -39,9 +39,11 @@ async function insertSearch (req, res) {
 }
 
 async function searchList(req, res) {
-
+    const offset = req.query.offset ? Number(req.query.offset) : null;
+    const limit = req.query.limit ? Number(req.query.limit) : null;
+    
     try {
-        let search = await Search.findAll({ where: { user_id: req.params.userId }});
+        let search = await Search.findAll({ offset: offset, limit : limit, where: { user_id: req.params.userId }});
         res.status(200).json(search);
     } catch (error) {
         res.status(500).json({

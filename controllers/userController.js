@@ -42,8 +42,11 @@ async function insertUser(req, res) {
 
 async function getUsers(req, res) {
 
+    const offset = req.query.offset ? Number(req.query.offset) : null;
+    const limit = req.query.limit ? Number(req.query.limit) : null;
+
     try {
-        const users = await User.findAll({ attributes: { exclude: ['password'] } });
+        const users = await User.findAll({ offset: offset, limit : limit,  attributes: { exclude: ['password'] } });
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({
