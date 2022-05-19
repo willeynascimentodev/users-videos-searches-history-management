@@ -17,3 +17,5 @@ Features
 1 - Configure your .env file with your Youtube Api Key, Database Access and use a JWT_SECRET of your choice
 
 2 - npm install
+
+3 - Execute npm start watch
