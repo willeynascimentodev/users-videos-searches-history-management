@@ -10,7 +10,10 @@ const Search = require('../models/searchModel');
 async function insertSearch (req, res) {
     
     try { 
-        const search = await Search.create(req.body);
+        const search = await Search.create({
+            title: req.body.title,
+            user_id: req.user.id
+        });
         res.status(201).json(search.title);   
     } catch (e) {
         let message = e.message.split(' ');

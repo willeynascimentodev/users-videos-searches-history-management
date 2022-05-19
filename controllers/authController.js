@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { sequelize } = require('sequelize');
 const database = require('../db');
 const User = require('../models/userModel');
@@ -12,7 +13,7 @@ async function login(req, res) {
         const passwordMatch = await bcrypt.compare(req.body.password, user.password);
 
         if (user && passwordMatch) {
-            user.token = generateToken(user._id);
+            user.token = generateToken(user.id);
             user.password = null;
             const token = user.token;
             res.status(200).json({user: user, token: token});
@@ -30,7 +31,6 @@ async function login(req, res) {
 }
 
 function generateToken(id) {
-    console.log(process.env.JWT_SECRET);
     return jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: 7200
     });
