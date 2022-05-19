@@ -31,7 +31,7 @@ async function login(req, res) {
 
 function generateToken(id) {
     console.log(process.env.JWT_SECRET);
-    return jwt.sign({ id }, 'abc123/', {
+    return jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: 7200
     });
 }
